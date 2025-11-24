@@ -17,45 +17,48 @@ class GreetingFSM:
         self.wait_deadline = None
         self.last_time = 0
         self.state_1_initial_outreach_prompts = [
-            "hello",
-            "hi",
+            "Hello!",
+            "Hi!",
         ]
         self.state_1_secondary_outreach_prompts = [
             "I said HI!",
-            "excuse me, hello?",
-            "hellllloooooo!",
+            "Excuse me, hello?",
+            "Hellllloooooo!",
         ]
         self.state_2_outreach_reply_phrases = [
-            "hello back at you!",
-            "hi",
+            "Hello back at you!",
+            "Hi",
+            "Howdy there, pardner! 🤠",
         ]
         self.state_1_inquiry_prompts = [
-            "how are you?",
-            "how are you doing?",
-            "what's happening?",
+            "How are you?",
+            "How are you doing?",
+            "What's happening?",
         ]
         self.state_2_inquiry_prompts = [
-            "how about you?",
-            "and yourself?",
+            "How about you?",
+            "And yourself?",
         ]
         self.state_2_inquiry_reply_phrases = [
-            "I'm fine",
-            "I'm good",
-            "I'm fine, thanks for asking",
+            "I'm fine.",
+            "I'm good.",
+            "I'm great, thanks for asking.",
         ]
         self.state_1_inquiry_reply_phrases = [
-            "I'm good",
-            "I'm fine, thanks for asking",
+            "I'm good.",
+            "I'm fine, thanks for asking.",
+            "Not too shabby.",
         ]
         self.state_1_giveup_frustrated_messages = [
             "Ok, forget you.",
             "Whatever.",
-            "screw you!",
-            "whatever, fine. Don't answer."
+            "Screw you!",
+            "Whatever, fine. Don't answer."
         ]
         self.state_2_inquiry_prompt_messages = [
             "Feel free to ask how I'm doing!",
             "Don't you think you should ask how I'm doing?",
+            "Oh, I guess my feelings don't matter. 😒"
         ]
 
     def reset(self):

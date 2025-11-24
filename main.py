@@ -10,7 +10,7 @@ from chatbot.irc_client import IRC
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-COUNTRY_DATA_PATH = os.path.join(BASE_DIR, "data", "countries of the world.csv")
+COUNTRY_DATA_PATH = os.path.join(BASE_DIR, "data", "countries_clean.csv")
 country_information_store = None
 
 try:
@@ -63,12 +63,13 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
         return
 
     # who are you? / usage
-    elif message_lower in ("who are you?", "usage"):
-        irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smail, and Nathan Lim.")
+    elif message_lower in ("who are you", "who are you?", "usage"):
+        irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smails, and Nathan Lim.")
         irc_client.send(channel_name, f"{sender}: I can answer questions about country stats (population, area, region, coastline, population density, "
         "GDP, literacy, cellular subscriptions, birthrate, deathrate). Nathan and Braeden worked on applying the cross-encoder model to detect "
-        "the type of question, and Lucas and Rory worked on the the country lookup. All of us worked on putting everything together and final answer generation. "
-        "Example question: \"How many people live in Italy?\"")
+        "the type of question, and Lucas and Rory worked on the the country lookup. All of us worked on putting everything together and final answer generation. ")
+
+        irc_client.send(channel_name, f"Example question: \"How many people live in Italy?\"")
         return
 
     # users
