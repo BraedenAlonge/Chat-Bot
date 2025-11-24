@@ -17,6 +17,9 @@ class OutreachController:
         self.join_timestamp = time.time()
         self.auto_outreach_deadline = self.join_timestamp + random.uniform(10, 20)
         self.auto_outreach_done = False
+        # Clear any record of prior completed greetings.
+        if hasattr(self.greeting_fsm, "conversation_completed"):
+            self.greeting_fsm.conversation_completed = False
 
     def update_users_from_names(self, names_line):
         try:
@@ -40,6 +43,10 @@ class OutreachController:
         if time.time() < self.auto_outreach_deadline:
             return
 
+        # If we've already completed a greeting conversation don't initiate auto outreach again
+        if getattr(self.greeting_fsm, "conversation_completed", False):
+            return
+
         if self.greeting_fsm.state != "START":
             return
 
@@ -48,6 +55,5 @@ class OutreachController:
             return
 
         partner = random.choice(candidates)
-        partner = "Braeden"
         if self.greeting_fsm.initiate_greeting(partner, irc_client, channel_name):
             self.auto_outreach_done = True

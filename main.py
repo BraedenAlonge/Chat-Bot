@@ -3,7 +3,7 @@ import random
 import sys
 import time
 import spacy
-from chatbot.auto_greeting_controller import OutreachController
+from chatbot.outreach_controller import OutreachController
 from chatbot.country_information_store import CountryInformationStore
 from chatbot.greeting_fsm import GreetingFSM
 from chatbot.irc_client import IRC

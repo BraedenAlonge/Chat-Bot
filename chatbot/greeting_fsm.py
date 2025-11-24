@@ -17,6 +17,8 @@ class GreetingFSM:
         self.wait_deadline = None
         self.last_time = 0
         self.timeout_inquiry_prompted = False
+        # Tracks whether a full greeting conversation has completed; will avoid outreach if so
+        self.conversation_completed = False
         self.state_1_initial_outreach_prompts = [
             "Hello!",
             "Hi!",
@@ -233,6 +235,7 @@ class GreetingFSM:
         self.complete_conversation()
 
     def complete_conversation(self):
+        self.conversation_completed = True
         self.state = "END"
         self.clear_timer()
         self.reset()
