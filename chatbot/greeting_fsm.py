@@ -5,7 +5,7 @@ import time
 class GreetingFSM:
     """Implements the Phase II greeting finite state machine."""
 
-    TIMEOUT_RANGE = (15, 30)
+    TIMEOUT_RANGE = (20, 30)
     PENDING_OUTREACH_STATES = {"1_INITIAL_OUTREACH", "1_SECONDARY_OUTREACH"}  # during outreach, bot can still receive greetings from other users
 
     def __init__(self):
@@ -16,6 +16,7 @@ class GreetingFSM:
         self.role = None
         self.wait_deadline = None
         self.last_time = 0
+        self.timeout_inquiry_prompted = False
         self.state_1_initial_outreach_prompts = [
             "Hello!",
             "Hi!",
@@ -69,6 +70,7 @@ class GreetingFSM:
         self.role = None
         self.wait_deadline = None
         self.last_time = 0
+        self.timeout_inquiry_prompted = False
 
     def initiate_greeting(self, partner, irc_client, channel_name):
         """Bot starts the greeting sequence as Speaker 1."""
@@ -111,10 +113,12 @@ class GreetingFSM:
         if not clean_message:
             return True
 
+        time.sleep(1)
+
         if self.state in ("1_INITIAL_OUTREACH", "1_SECONDARY_OUTREACH"):
             self.handle_speaker1_outreach_reply()
         elif self.state == "1_INQUIRY":
-            self.handle_speaker1_status_reply()
+            self.handle_speaker1_status_reply(clean_message)
         elif self.state == "1_INQUIRY_REPLY":
             self.complete_conversation()
         elif self.state == "2_OUTREACH_REPLY":
@@ -138,7 +142,14 @@ class GreetingFSM:
 
         if self.state == "1_INITIAL_OUTREACH":
             self.send_secondary_outreach()
-        elif self.state in {"1_SECONDARY_OUTREACH", "1_INQUIRY", "1_INQUIRY_REPLY", "2_OUTREACH_REPLY", "2_INQUIRY", "2_INQUIRY_REPLY"}:
+        elif self.state == "2_INQUIRY_REPLY":
+            # On first timeout in 2_INQUIRY_REPLY, prompt once; on second timeout, give up.
+            if not self.timeout_inquiry_prompted:
+                self.timeout_inquiry_prompted = True
+                self.prompt_for_inquiry()
+            else:
+                self.enter_giveup_state()
+        elif self.state in {"1_SECONDARY_OUTREACH", "1_INQUIRY", "1_INQUIRY_REPLY", "2_OUTREACH_REPLY", "2_INQUIRY"}:
             self.enter_giveup_state()
 
     def update_context(self, irc_client, channel_name):
@@ -173,11 +184,18 @@ class GreetingFSM:
         self.state = "1_INQUIRY_REPLY"
         acknowledgment = random.choice(self.state_1_inquiry_reply_phrases)
         self.send_message_to_partner(acknowledgment)
-        self.start_timer()
+        self.complete_conversation()
 
-    def handle_speaker1_status_reply(self):
-        self.state = "2_INQUIRY_REPLY"
-        self.start_timer()
+    def handle_speaker1_status_reply(self, message):
+        # If message ALSO includes an inquiry about us, treat it as both the status reply and the partner inquiry in one
+        if self.looks_like_inquiry(message):
+            self.state = "2_INQUIRY"
+            self.handle_speaker1_inquiry_response()
+        else:
+            # Otherwise, wait for follow up
+            self.state = "2_INQUIRY_REPLY"
+            self.timeout_inquiry_prompted = False
+            self.start_timer()
 
     def handle_speaker1_partner_inquiry(self, message):
         if not self.looks_like_inquiry(message):
@@ -212,8 +230,7 @@ class GreetingFSM:
     def enter_giveup_state(self):
         self.state = "GIVEUP_FRUSTRATED"
         self.send_message_to_partner(random.choice(self.state_1_giveup_frustrated_messages))
-        self.clear_timer()
-        self.reset()
+        self.complete_conversation()
 
     def complete_conversation(self):
         self.state = "END"
