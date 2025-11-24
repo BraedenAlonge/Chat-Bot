@@ -81,7 +81,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
         return "users"
 
     # greetings (handed off to FSM)
-    elif message_lower in ("hi", "hello"):
+    elif "hi" in message_lower or "hello" in message_lower or "hey" in message_lower:
         greeting_state_machine.receive_greeting(sender, irc_client, channel_name)
         return
 
