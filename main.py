@@ -89,6 +89,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
     if country_information_store:
         smart_response = country_information_store.answer_question(message_text)
     if smart_response:
+        time.sleep(1)
         irc_client.send(channel_name, f"{sender}: {smart_response}")
         return
 
