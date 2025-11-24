@@ -48,5 +48,6 @@ class OutreachController:
             return
 
         partner = random.choice(candidates)
+        partner = "Braeden"
         if self.greeting_fsm.initiate_greeting(partner, irc_client, channel_name):
             self.auto_outreach_done = True

@@ -65,7 +65,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
     # who are you? / usage
     elif message_lower in ("who are you", "who are you?", "usage"):
         time.sleep(1)
-        irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smails, and Nathan Lim.")
+        irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smail, and Nathan Lim.")
         irc_client.send(channel_name, f"{sender}: I can answer questions about country stats (population, area, region, coastline, population density, "
         "GDP, literacy, cellular subscriptions, birthrate, deathrate). Nathan and Braeden worked on applying the cross-encoder model to detect "
         "the type of question, and Lucas and Rory worked on the the country lookup. All of us worked on putting everything together and final answer generation. ")
@@ -93,9 +93,19 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
         irc_client.send(channel_name, f"{sender}: {smart_response}")
         return
 
+
     # Greeting FSM may still need to consume the message if we are mid-conversation
     if greeting_state_machine.handle_conversation_message(sender, message_text, irc_client, channel_name):
         return
+
+    # If we reached this point, bot did not understand the message
+    time.sleep(1)
+    fallback_responses = [
+        "Sorry, I don't know that one.",
+        "Can you try asking something I would know?"
+    ]
+    irc_client.send(channel_name, f"{sender}: {random.choice(fallback_responses)}")
+    return
 
 
 if os.path.exists(COUNTRY_DATA_PATH):
@@ -110,8 +120,8 @@ else:
 ## IRC Config
 server = "irc.libera.chat"  # server IP/Hostname
 port = 6667
-channel = "#myowntestcsc482lobster"
-botnick = "rando-bot" + str(random.randint(0, 1000))
+channel = "#CSC482"
+botnick = "Braethan-bot" + str(random.randint(0, 999))
 botnickpass = ""  # for a registered nickname
 botpass = ""  # for a registered bot
 
