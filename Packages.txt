@@ -1,0 +1,4 @@
+spacy
+pandas
+Levenshtein
+sentence-transformers

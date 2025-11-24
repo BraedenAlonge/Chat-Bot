@@ -1,184 +1,164 @@
-import socket
+import os
+import random
 import sys
 import time
-import random
+import spacy
+from auto_greeting_controller import OutreachController
+from country_information_store import CountryInformationStore
+from greeting_fsm import GreetingFSM
+from irc_client import IRC
 
 
-def parse_message(raw, botnick):
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+COUNTRY_DATA_PATH = os.path.join(BASE_DIR, "data", "countries of the world.csv")
+country_information_store = None
+
+try:
+    spacy.load("en_core_web_lg")
+except OSError:
+    spacy.cli.download("en_core_web_lg")
+
+
+def parse_message(raw_text, botnick):
     """
     Extracts the sender and message text.
     Detects if message is addressed to the bot: botnick:
     """
-    if "PRIVMSG" not in raw:
+    if " PRIVMSG " not in raw_text:
         return None, None, False
 
     try:
-        sender = raw.split("!")[0].replace(":", "")
-        msg = raw.split("PRIVMSG", 1)[1].split(":", 1)[1].strip()
-    except:
+        sender = raw_text.split("!")[0].replace(":", "")
+        message_text = raw_text.split("PRIVMSG", 1)[1].split(":", 1)[1].strip()
+    except Exception:
         return None, None, False
 
-    addressed = msg.lower().startswith(botnick.lower() + ":")
-    if addressed:
-        msg = msg[len(botnick) + 1:].strip()
+    is_addressed = message_text.lower().startswith(botnick.lower() + ":")
+    if is_addressed:
+        message_text = message_text[len(botnick) + 1:].strip()
 
-    return sender, msg, addressed
+    return sender, message_text, is_addressed
 
 
 # Memory store (for forget command)
 memory = {}
 
-def handle_command(sender, msg, irc, channel, botnick):
-    m = msg.lower()
+def handle_command(sender, message_text, irc_client, channel_name, botnick, auto_greeting_controller):
+    message_lower = message_text.lower()
+
+    time.sleep(1)  # requirement for the assignment to have a small delay
 
     # die
-    if m == "die":
-        irc.send(channel, f"{sender}: I shall!")
-        irc.command("QUIT")
+    if message_lower == "die":
+        irc_client.send(channel_name, f"{sender}: I shall!")
+        irc_client.command("QUIT")
         sys.exit()
 
     # forget
-    elif m == "forget":
+    elif message_lower == "forget":
         memory.clear()
-        irc.send(channel, f"{sender}: forgetting everything")
+        greeting_state_machine.reset()
+        auto_greeting_controller.reset_on_join()
+        irc_client.send(channel_name, f"{sender}: forgetting everything")
         return
 
     # who are you? / usage
-    elif m in ("who are you?", "usage"):
-        irc.send(channel, f"{sender}: My name is {botnick}. I was created by the greatest 482 group of all time. 6-7!")
-        irc.send(channel, f"{sender}: I can answer questions about populations. Example: \"What is the population of France?\"")
+    elif message_lower in ("who are you?", "usage"):
+        irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smail, and Nathan Lim.")
+        irc_client.send(channel_name, f"{sender}: I can answer questions about country stats (population, area, region, coastline, population density, "
+        "GDP, literacy, cellular subscriptions, birthrate, deathrate). Nathan and Braeden worked on applying the cross-encoder model to detect "
+        "the type of question, and Lucas and Rory worked on the the country lookup. All of us worked on putting everything together and final answer generation. "
+        "Example question: \"How many people live in Italy?\"")
         return
 
     # users
-    elif m == "users":
-        irc.command(f"NAMES {channel}")
-        return
+    elif message_lower == "users":
+        # send a list of users in the channel
+        irc_client.command(f"NAMES {channel_name}")
+        return "users"
 
     # greetings (handed off to FSM)
-    elif m in ("hi", "hello"):
-        greeting_manager.receive_greeting(sender, irc, channel)
+    elif message_lower in ("hi", "hello"):
+        greeting_state_machine.receive_greeting(sender, irc_client, channel_name)
         return
 
-    # What is the population of X?
-    elif m.startswith("what is the population of "):
-        country = m.replace("what is the population of", "").strip(" ?")
-        pop = pop_lookup(country)
-        irc.send(channel, f"{sender}: The population of {country.title()} is {pop}.")
+    smart_response = None
+    if country_information_store:
+        smart_response = country_information_store.answer_question(message_text)
+    if smart_response:
+        irc_client.send(channel_name, f"{sender}: {smart_response}")
+        return
+
+    # Greeting FSM may still need to consume the message if we are mid-conversation
+    if greeting_state_machine.handle_conversation_message(sender, message_text, irc_client, channel_name):
         return
 
 
-population_data = {
-    "france": "67 million",
-    "germany": "83 million",
-    "japan": "125 million",
-    "italy": "59 million",
-    "usa": "331 million",
-    "united states": "331 million",
-}
-
-def pop_lookup(country):
-    c = country.lower()
-    if c in population_data:
-        return population_data[c]
-    return "unknown (not in my database)"
-
-class IRC:
-    irc = socket.socket()
-
-    def __init__(self):
-        # Deefine the socket
-        self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    def command(self, msg):
-        self.irc.send(bytes(msg + "\n", "UTF-8"))
-
-    def send(self, channel, msg):
-        # Transfer data
-        self.command("PRIVMSG " + channel + " :" + msg)
-
-    def connect(self, server, port, channel, botnick, botpass, botnickpass):
-        # Connect to the server
-        print("Connecting to: " + server)
-        self.irc.connect((server, port))
-
-        # Perform user authentication
-        self.command("USER " + botnick + " " + botnick + " " + botnick + " :python")
-        self.command("NICK " + botnick)
-        # self.irc.send(bytes("NICKSERV IDENTIFY " + botnickpass + " " + botpass + "\n", "UTF-8"))
-        time.sleep(5)
-
-        # join the channel
-        self.command("JOIN " + channel)
-
-    def get_response(self):
-        time.sleep(1)
-        # Get the response
-        resp = self.irc.recv(2040).decode("UTF-8")
-
-        if resp.find('PING') != -1:
-            self.command('PONG ' + resp.split()[1] + '\r')
-
-        return resp
-
-# GREETINGS
-class GreetingFSM:
-    def __init__(self):
-        self.state = "START"
-        self.partner = None
-        self.last_time = 0
-
-    def reset(self):
-        self.state = "START"
-        self.partner = None
-
-    # --- when someone says hi/hello TO THE BOT ---
-    def receive_greeting(self, sender, irc, channel):
-        # Case 1: idle → they greeted us first
-        if self.state == "START":
-            self.partner = sender
-            self.state = "2_OUTREACH_REPLY"
-            irc.send(channel, f"{sender}: hello back at you!")
-            self.last_time = time.time()
-            return
-
-        # (Other transitions optional for now — minimal FSM works)
-
-    # timeouts for frustration
-    def check_timeout(self, irc, channel):
-        if self.state != "START":
-            if time.time() - self.last_time > 20:
-                irc.send(channel, f"{self.partner}: whatever, fine. Don't answer.😒")
-                self.reset()
-
-greeting_manager = GreetingFSM()
-
-
+if os.path.exists(COUNTRY_DATA_PATH):
+    try:
+        country_information_store = CountryInformationStore(COUNTRY_DATA_PATH)
+    except Exception as exc:
+        print(f"Failed to initialize CountryInformationStore: {exc}")
+        country_information_store = None
+else:
+    print(f"Country data file not found: {COUNTRY_DATA_PATH}")
 
 ## IRC Config
 server = "irc.libera.chat"  # server IP/Hostname
 port = 6667
-channel = "#CSC482"
+channel = "#myowntestcsc482lobster"
 botnick = "rando-bot" + str(random.randint(0, 1000))
 botnickpass = ""  # for a registered nickname
 botpass = ""  # for a registered bot
 
-irc = IRC()
-irc.connect(server, port, channel, botnick, botpass, botnickpass)
+greeting_state_machine = GreetingFSM()
+auto_greeting_controller = OutreachController(greeting_state_machine, botnick)
 
-while True:
-    text = irc.get_response()
-    print("RECEIVED ==> ", text)
+if __name__ == "__main__":
+    irc_client = IRC()
+    irc_client.connect(server, port, channel, botnick, botpass, botnickpass)
 
-    sender, msg, addressed = parse_message(text, botnick)
-    if not msg:
-        continue
+    auto_greeting_controller.reset_on_join()
 
-    # Handle addressed commands
-    if addressed:
-        handle_command(sender, msg, irc, channel, botnick)
-        continue
+    requesting_user = None
 
-    # Check greeting FSM timeout
-    greeting_manager.check_timeout(irc, channel)
+    while True:
+        response_text = irc_client.get_response()
+        if response_text:
+            print("RECEIVED ==> ", response_text)
 
-    # General greetings NOT addressed to bot? ignore or extend later
+            for response_line in response_text.split("\n"):
+                response_line = response_line.strip()
+                if not response_line:
+                    continue
+
+                if " 353 " in response_line and channel in response_line:
+                    auto_greeting_controller.update_users_from_names(response_line)
+                    if requesting_user:
+                        try:
+                            raw_name_list = response_line.split(" :")[-1].strip().split()
+                            filtered_names = []
+                            for name_value in raw_name_list:
+                                if name_value not in (requesting_user, botnick):
+                                    filtered_names.append(name_value)
+                            irc_client.send(channel, f"{requesting_user}: {' '.join(filtered_names)}")
+                        except Exception:
+                            pass
+
+                if " 366 " in response_line and channel in response_line:
+                    requesting_user = None
+
+                sender, message_text, is_addressed = parse_message(response_line, botnick)
+                if not message_text:
+                    continue
+
+                auto_greeting_controller.note_activity(sender)
+
+                # Handle addressed commands
+                if is_addressed:
+                    if handle_command(sender, message_text, irc_client, channel, botnick, auto_greeting_controller) == "users":
+                        requesting_user = sender
+                    continue
+
+        greeting_state_machine.check_timeout(irc_client, channel)
+        auto_greeting_controller.attempt_auto_outreach(irc_client, channel)
