@@ -46,16 +46,16 @@ memory = {}
 def handle_command(sender, message_text, irc_client, channel_name, botnick, auto_greeting_controller):
     message_lower = message_text.lower()
 
-    time.sleep(1)  # requirement for the assignment to have a small delay
-
     # die
     if message_lower == "die":
+        time.sleep(1)
         irc_client.send(channel_name, f"{sender}: I shall!")
         irc_client.command("QUIT")
         sys.exit()
 
     # forget
     elif message_lower == "forget":
+        time.sleep(1)
         memory.clear()
         greeting_state_machine.reset()
         auto_greeting_controller.reset_on_join()
@@ -64,6 +64,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
 
     # who are you? / usage
     elif message_lower in ("who are you", "who are you?", "usage"):
+        time.sleep(1)
         irc_client.send(channel_name, f"{sender}: My name is {botnick}. I was created by Braeden Alonge, Lucas Summers, Rory Smails, and Nathan Lim.")
         irc_client.send(channel_name, f"{sender}: I can answer questions about country stats (population, area, region, coastline, population density, "
         "GDP, literacy, cellular subscriptions, birthrate, deathrate). Nathan and Braeden worked on applying the cross-encoder model to detect "
@@ -74,6 +75,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
 
     # users
     elif message_lower == "users":
+        time.sleep(1)
         # send a list of users in the channel
         irc_client.command(f"NAMES {channel_name}")
         return "users"
