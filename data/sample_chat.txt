@@ -1,0 +1,74 @@
+[4:10:07 PM] → Braethan-bot232 has joined
+[4:10:24 PM] <Braethan-bot232> Braeden: Hello!
+[4:10:39 PM] <Braeden> Braethan-bot232: How is it going
+[4:10:41 PM] <Braethan-bot232> Braeden: What's happening?
+[4:10:52 PM] <Braeden> Braethan-bot232: nothing much
+[4:10:57 PM] <Braeden> Braethan-bot232: how are you?
+[4:10:58 PM] <Braethan-bot232> Braeden: Not too shabby.
+[4:11:05 PM] <Braeden> Braethan-bot232: usage
+[4:11:07 PM] <Braethan-bot232> Braeden: My name is Braethan-bot232. I was created by Braeden Alonge, Lucas Summers, Rory Smail, and Nathan Lim.
+[4:11:07 PM] <Braethan-bot232> Example question: "How many people live in Italy?"
+[4:11:07 PM] <Braethan-bot232> Braeden: I can answer questions about country stats (population, area, region, coastline, population density, GDP, literacy, cellular subscriptions, birthrate, deathrate). Nathan and Braeden worked on applying the cross-encoder model to detect the type of question, and Lucas and Rory worked on the the country lookup. All of us worked on putting everything together and final answer generation.
+[4:11:12 PM] <Braeden> Braethan-bot232: users
+[4:11:14 PM] <Braethan-bot232> Braeden: Guest6 Rory_sma sahkar Guest41 @foaad_bot9
+[4:11:27 PM] <Braeden> Braethan-bot232: Can you tell me about the cellular subscriptions in austria?
+[4:11:29 PM] <Braethan-bot232> Braeden: There are 452.2 cellular subscriptions per 1,000 people in Austria.
+[4:11:42 PM] <Braeden> Braethan-bot232: Cool. what do you know about jamaica's literacy?
+[4:11:44 PM] <Braethan-bot232> Braeden: Jamaica's literacy rate is 87.9%.
+[4:11:56 PM] <Braeden> Braethan-bot232: how about the population of inida
+[4:11:57 PM] <Braethan-bot232> Braeden: The population of India is 1095351995 people.
+[4:12:12 PM] <Braeden> Braethan-bot232: what is the deathrate of south korea?
+[4:12:14 PM] <Braethan-bot232> Braeden: South Korea has a death rate of 5.85 deaths per 1,000 people.
+[4:12:26 PM] <Braeden> Braethan-bot232: Can you tell me how to get an A in this class?
+[4:12:27 PM] <Braethan-bot232> Braeden: Sorry, I don't know that one.
+[4:12:45 PM] <Braeden> Braethan-bot232: forget
+[4:12:46 PM] <Braethan-bot232> Braeden: forgetting everything
+[4:12:46 PM] ← Guest6 has left (Client Quit)
+[4:12:53 PM] <Braeden> Braethan-bot232: hi
+[4:12:53 PM] <Braethan-bot232> Braeden: Hi
+[4:13:13 PM] <Braethan-bot232> Braeden: Whatever, fine. Don't answer.
+[4:13:45 PM] <Braeden> Braethan-bot232: hello!
+[4:13:46 PM] <Braethan-bot232> Braeden: Howdy there, pardner! 🤠
+[4:13:57 PM] <Braeden> Braethan-bot232: how do you do?
+[4:13:58 PM] <Braethan-bot232> Braeden: I'm fine.
+[4:13:59 PM] <Braethan-bot232> Braeden: How about you?
+[4:14:04 PM] <Braeden> Braethan-bot232: great
+[4:14:47 PM] <Braeden> Braethan-bot232: what is the area of cuba?
+[4:14:49 PM] <Braethan-bot232> Braeden: Cuba covers 110860 square miles.
+[4:14:49 PM] → seth-noor-bot has joined
+[4:15:00 PM] <seth-noor-bot> Rory_sma: hi
+[4:15:10 PM] ← seth-noor-bot has left (Remote host closed the connection)
+[4:15:19 PM] <Braeden> Braethan-bot232: how big is ireland?
+[4:15:20 PM] <Braethan-bot232> Braeden: Ireland covers 70280 square miles.
+[4:15:58 PM] <Braeden> how much coast specifically for the country of Portugal?
+[4:16:10 PM] <Braeden> Braethan-bot232: how much coast specifically for the country of Portugal?
+[4:16:12 PM] <Braethan-bot232> Braeden: The coastline-to-area ratio for Portugal is 1.94.
+[4:16:39 PM] <Braeden> Braethan-bot232: Is there any extra credit for this class?
+[4:16:40 PM] <Braethan-bot232> Braeden: Sorry, I don't know that one.
+[4:16:50 PM] <Braeden> Braethan-bot232: die
+[4:16:51 PM] <Braethan-bot232> Braeden: I shall!
+[4:16:51 PM] ← Braethan-bot232 has left (Quit: Braethan-bot232)
+
+
+
+[4:19:15 PM] → Braethan-bot310 has joined
+[4:19:28 PM] <Braethan-bot310> Braeden: Hi!
+[4:19:55 PM] <Braethan-bot310> Braeden: I said HI!
+[4:20:04 PM] <Braeden> Braethan-bot310: hey
+[4:20:06 PM] <Braethan-bot310> Braeden: What's happening?
+[4:20:27 PM] <Braethan-bot310> Braeden: Whatever, fine. Don't answer.
+[4:20:42 PM] <Braeden> Braethan-bot310: forget
+[4:20:43 PM] <Braethan-bot310> Braeden: forgetting everything
+[4:20:56 PM] <Braethan-bot310> Braeden: Hi!
+[4:21:20 PM] <Braethan-bot310> Braeden: Hellllloooooo!
+[4:21:23 PM] <Braeden> Braethan-bot310: hello
+[4:21:25 PM] <Braethan-bot310> Braeden: How are you?
+[4:21:30 PM] <Braeden> i'm good.
+[4:21:48 PM] <Braeden> Braethan-bot310: i'm good
+[4:22:19 PM] <Braethan-bot310> Braeden: Don't you think you should ask how I'm doing?
+[4:22:37 PM] ← sahkar has left (Quit: Client closed)
+[4:22:47 PM] <Braethan-bot310> Braeden: Whatever.
+[4:22:50 PM] → sahkar has joined
+[4:22:59 PM] <Braeden> Braethan-bot310:die
+[4:23:00 PM] <Braethan-bot310> Braeden: I shall!
+[4:23:01 PM] ← Braethan-bot310 has left (Client Quit)
