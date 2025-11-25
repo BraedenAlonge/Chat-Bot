@@ -1,5 +1,6 @@
 import os
 import random
+import re
 import sys
 import time
 import spacy
@@ -81,7 +82,7 @@ def handle_command(sender, message_text, irc_client, channel_name, botnick, auto
         return "users"
 
     # greetings (handed off to FSM)
-    elif "hi" in message_lower or "hello" in message_lower or "hey" in message_lower:
+    elif re.search(r"\b(hi|hello|hey)\b", message_lower):
         greeting_state_machine.receive_greeting(sender, irc_client, channel_name)
         return
 
